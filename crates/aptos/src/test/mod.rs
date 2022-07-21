@@ -10,9 +10,10 @@ use crate::move_tool::{
     ArgWithType, CompilePackage, InitPackage, MemberId, PublishPackage, RunFunction, TestPackage,
 };
 use crate::node::{
-    AddStake, IncreaseLockup, JoinValidatorSet, LeaveValidatorSet, OperatorArgs,
-    RegisterValidatorCandidate, ShowValidatorConfig, ShowValidatorSet, ShowValidatorStake,
-    UnlockStake, UpdateValidatorNetworkAddresses, ValidatorConfigArgs, WithdrawStake,
+    AddStake, AnalyzeMode, AnalyzeValidatorPerformance, IncreaseLockup, JoinValidatorSet,
+    LeaveValidatorSet, OperatorArgs, RegisterValidatorCandidate, ShowValidatorConfig,
+    ShowValidatorSet, ShowValidatorStake, UnlockStake, UpdateValidatorNetworkAddresses,
+    ValidatorConfigArgs, WithdrawStake,
 };
 use crate::{
     account::{
@@ -351,6 +352,22 @@ impl CliTestFramework {
                 full_node_host: None,
                 full_node_network_public_key: None,
             },
+        }
+        .execute()
+        .await
+    }
+
+    pub async fn analyze_validator_performance(
+        &self,
+        start_epoch: Option<u64>,
+        end_epoch: Option<u64>,
+    ) -> CliTypedResult<()> {
+        AnalyzeValidatorPerformance {
+            start_epoch,
+            end_epoch,
+            rest_options: self.rest_options(),
+            profile_options: Default::default(),
+            analyze_mode: AnalyzeMode::All,
         }
         .execute()
         .await
