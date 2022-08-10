@@ -62,7 +62,7 @@ module std::bit_vector {
         let bits = little_endian_bitvector_from_byte_vector_internal(v);
         let len = std::vector::length(&v) * 8u64;
 
-        assert!(std::vector::length(&bits) == len, 1);
+        //assert!(std::vector::length(&bits) == len, ELENGTH);
 
         BitVector {
             length: len,
@@ -79,7 +79,7 @@ module std::bit_vector {
         let bits = big_endian_bitvector_from_byte_vector_internal(v);
         let len = std::vector::length(&v) * 8u64;
 
-        assert!(std::vector::length(&bits) == len, 1);
+        //assert!(std::vector::length(&bits) == len, ELENGTH);
 
         BitVector {
             length: len,

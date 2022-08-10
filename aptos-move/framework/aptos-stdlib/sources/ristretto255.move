@@ -110,7 +110,7 @@ module cryptography::ristretto255 {
 
     /// Returns true if the given Scalar equals 0.
     public fun scalar_is_zero(s: &Scalar): bool {
-        assert!(is_canonical_internal(s.data), 1);
+        //assert!(is_canonical_internal(s.data), 1);
 
         s.data == x"0000000000000000000000000000000000000000000000000000000000000000"
     }
@@ -124,15 +124,15 @@ module cryptography::ristretto255 {
 
     /// Returns true if the given Scalar equals 1.
     public fun scalar_is_one(s: &Scalar): bool {
-        assert!(is_canonical_internal(s.data), 1);
+        //assert!(is_canonical_internal(s.data), 1);
 
         s.data == x"0100000000000000000000000000000000000000000000000000000000000000"
     }
 
     /// Returns true if the two scalars are equal.
     public fun scalar_equals(lhs: &Scalar, rhs: &Scalar): bool {
-        assert!(is_canonical_internal(lhs.data), 1);
-        assert!(is_canonical_internal(rhs.data), 1);
+        //assert!(is_canonical_internal(lhs.data), 1);
+        //assert!(is_canonical_internal(rhs.data), 1);
 
         lhs.data == rhs.data
     }
@@ -147,7 +147,7 @@ module cryptography::ristretto255 {
     ///     bit: 0 0 1 1 1 0 0 0
     ///     idx: 0 1 2 3 4 5 6 7
     public fun scalar_little_endian_bits(s: &Scalar): BitVector {
-        assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
+        //assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
 
         std::bit_vector::new_little_endian_from_byte_vector(s.data)
     }
@@ -158,7 +158,7 @@ module cryptography::ristretto255 {
     ///     bit: 0 0 0 1 1 1 0 0
     ///     idx: 0 1 2 3 4 5 6 7
     public fun scalar_big_endian_bits(s: &Scalar): BitVector {
-        assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
+        //assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
 
         std::bit_vector::new_big_endian_from_byte_vector(s.data)
     }
@@ -166,7 +166,7 @@ module cryptography::ristretto255 {
     /// Returns the inverse s^{-1} mod \ell of a scalar s.
     /// Returns None if s is zero.
     public fun scalar_invert(s: &Scalar): Option<Scalar> {
-        assert!(is_canonical_internal(s.data), 1);
+        //assert!(is_canonical_internal(s.data), 1);
 
         if (scalar_is_zero(s)) {
             std::option::none<Scalar>()
