@@ -4,7 +4,7 @@
 /// of the prime-order subgroup of Curve25519.
 module cryptography::ristretto255 {
     use std::option::Option;
-    // TODO: use std::bit_vector::BitVector;
+    use std::bit_vector::BitVector;
 
     // TODO: compressedpoint struct (to store on chain)
     // TODO: point struct (to do fast arithmetic with)
@@ -29,10 +29,10 @@ module cryptography::ristretto255 {
     ];
 
     // TODO: Consider supporting:
-    //  - Indexing individual bits of the scalar (bits())
     //  - Batch inversion (batch_invert())
 
-    /// Struct representing a scalar in $\mathbb{Z}_\ell$: i.e., a number in [0, \ell)
+    /// This struct represents a scalar as a little-endian byte encoding of an integer in $\mathbb{Z}_\ell$, which is
+    /// stored in `data`. Here, \ell denotes the order of the scalar field (and the underlying elliptic curve group).
     struct Scalar has key, store, drop {
         data: vector<u8>
     }
@@ -79,7 +79,7 @@ module cryptography::ristretto255 {
         }
     }
 
-    /// Creates a Scalar from 32 bytes by reducing the little-endian encoded number in those bytes modulo $\ell$.
+    /// Creates a Scalar from 32 bytes by reducing the little-endian-encoded number in those bytes modulo $\ell$.
     public fun new_scalar_from_reduced_256_bits(bytes: vector<u8>): Option<Scalar> {
         if (std::vector::length(&bytes) == 32) {
             std::option::some(Scalar {
@@ -90,7 +90,7 @@ module cryptography::ristretto255 {
         }
     }
 
-    /// Creates a Scalar from 64 bytes by reducing the little-endian encoded number in those bytes modulo $\ell$.
+    /// Creates a Scalar from 64 bytes by reducing the little-endian-encoded number in those bytes modulo $\ell$.
     public fun new_scalar_from_reduced_512_bits(bytes: vector<u8>): Option<Scalar> {
         if (std::vector::length(&bytes) == 64) {
             std::option::some(Scalar {
@@ -137,12 +137,31 @@ module cryptography::ristretto255 {
         lhs.data == rhs.data
     }
 
-//    /// Returns the 256-bit binary representation of a Scalar.
-//    public fun scalar_bits(s: &Scalar): BitVector {
-//        assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
-//
-//        // TODO: implement
-//    }
+    /// Returns the 256-bit binary representation of a Scalar, where bits within a byte are sorted in litle-endian order.
+    ///
+    /// e.g., 0x1C would typically be expressed in binary as:
+    ///     bit: 0 0 0 1 1 1 0 0
+    ///     idx: 0 1 2 3 4 5 6 7
+    ///
+    /// However, this function will represent it by reversing the bits as:
+    ///     bit: 0 0 1 1 1 0 0 0
+    ///     idx: 0 1 2 3 4 5 6 7
+    public fun scalar_little_endian_bits(s: &Scalar): BitVector {
+        assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
+
+        std::bit_vector::new_little_endian_from_byte_vector(s.data)
+    }
+
+    /// Returns the 256-bit binary representation of a Scalar, where bits within a byte are sorted in big-endian order.
+    ///
+    /// e.g., for 0x1C this function would represent it as:
+    ///     bit: 0 0 0 1 1 1 0 0
+    ///     idx: 0 1 2 3 4 5 6 7
+    public fun scalar_big_endian_bits(s: &Scalar): BitVector {
+        assert!(std::vector::length(&s.data) == MAX_SCALAR_NUM_BYTES, 1);
+
+        std::bit_vector::new_big_endian_from_byte_vector(s.data)
+    }
 
     /// Returns the inverse s^{-1} mod \ell of a scalar s.
     /// Returns None if s is zero.
@@ -281,11 +300,54 @@ module cryptography::ristretto255 {
     ];
 
     // X^{-1} = 1/X = 6859937278830797291664592131120606308688036382723378951768035303146619657244
+    // 0x1CDC17FCE0E9A5BBD9247E56BB016347BBBA31EDD5A9BB96D50BCD7A3F962A0F
     const X_INV: vector<u8> = vector[
         0x1c, 0xdc, 0x17, 0xfc, 0xe0, 0xe9, 0xa5, 0xbb,
         0xd9, 0x24, 0x7e, 0x56, 0xbb, 0x01, 0x63, 0x47,
         0xbb, 0xba, 0x31, 0xed, 0xd5, 0xa9, 0xbb, 0x96,
         0xd5, 0x0b, 0xcd, 0x7a, 0x3f, 0x96, 0x2a, 0x0f,
+    ];
+
+    // X_INV from above, but in big-endian binary:
+    // 0001110011011100000101111111110011100000111010011010010110111011110110010010010001111110010101101011101100000001011000110100011110111011101110100011000111101101110101011010100110111011100101101101010100001011110011010111101000111111100101100010101000001111
+    const X_INV_BE_BITS: vector<bool> = vector[
+        false, false, false, true,  true,  true,  false, false, true,  true,  false, true,  true,  true,  false, false, 
+        false, false, false, true,  false, true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, 
+        true,  true,  true,  false, false, false, false, false, true,  true,  true,  false, true,  false, false, true, 
+        true,  false, true,  false, false, true,  false, true,  true,  false, true,  true,  true,  false, true,  true, 
+        true,  true,  false, true,  true,  false, false, true,  false, false, true,  false, false, true,  false, false,
+        false, true,  true,  true,  true,  true,  true,  false, false, true,  false, true,  false, true,  true,  false,
+        true,  false, true,  true,  true,  false, true,  true,  false, false, false, false, false, false, false, true, 
+        false, true,  true,  false, false, false, true,  true,  false, true,  false, false, false, true,  true,  true,
+        true,  false, true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  false, true,  false,
+        false, false, true,  true,  false, false, false, true,  true,  true,  true,  false, true,  true,  false, true,
+        true,  true,  false, true,  false, true,  false, true,  true,  false, true,  false, true,  false, false, true,
+        true,  false, true,  true,  true,  false, true,  true,  true,  false, false, true,  false, true,  true,  false,
+        true,  true,  false, true,  false, true,  false, true,  false, false, false, false, true,  false, true,  true,
+        true,  true,  false, false, true,  true,  false, true,  false, true,  true,  true,  true,  false, true,  false,
+        false, false, true,  true,  true,  true,  true,  true,  true,  false, false, true,  false, true,  true,  false,
+        false, false, true,  false, true,  false, true,  false, false, false, false, false, true,  true,  true,  true,
+    ];
+
+    // X_INV from above, but in little-endian binary (least significant bit is at the smallest index)
+    // These bits were obtained by writing a custom test in curve25519-dalek's src/scalar.rs file.
+    const X_INV_LE_BITS: vector<bool> = vector[
+        false, false, true,  true,  true,  false, false, false, false, false, true,  true,  true,  false, true,  true,
+        true,  true,  true,  false, true,  false, false, false, false, false, true,  true,  true,  true,  true,  true,
+        false, false, false, false, false, true,  true,  true,  true,  false, false, true,  false, true,  true,  true,
+        true,  false, true,  false, false, true,  false, true,  true,  true,  false, true,  true,  true,  false, true,
+        true,  false, false, true,  true,  false, true,  true,  false, false, true,  false, false, true,  false, false,
+        false, true,  true,  true,  true,  true,  true,  false, false, true,  true,  false, true,  false, true,  false,
+        true,  true,  false, true,  true,  true,  false, true,  true,  false, false, false, false, false, false, false,
+        true,  true,  false, false, false, true,  true,  false, true,  true,  true,  false, false, false, true,  false,
+        true,  true,  false, true,  true,  true,  false, true,  false, true,  false, true,  true,  true,  false, true,
+        true,  false, false, false, true,  true,  false, false, true,  false, true,  true,  false, true,  true,  true,
+        true,  false, true,  false, true,  false, true,  true,  true,  false, false, true,  false, true,  false, true,
+        true,  true,  false, true,  true,  true,  false, true,  false, true,  true,  false, true,  false, false, true,
+        true,  false, true,  false, true,  false, true,  true,  true,  true,  false, true,  false, false, false, false,
+        true,  false, true,  true,  false, false, true,  true,  false, true,  false, true,  true,  true,  true,  false,
+        true,  true,  true,  true,  true,  true,  false, false, false, true,  true,  false, true,  false, false, true,
+        false, true,  false, true,  false, true,  false, false, true,  true,  true,  true,  false, false, false, false
     ];
 
     // Some random scalar Y = 2592331292931086675770238855846338635550719849568364935475441891787804997264
@@ -564,5 +626,32 @@ module cryptography::ristretto255 {
         let reduced = std::option::extract(&mut new_scalar_from_reduced_512_bits(x_plus_2_to_256_times_x));
         let expected = Scalar { data: CANONICAL_X_PLUS_2_TO_256_TIMES_X };
         assert!(scalar_equals(&reduced, &expected), 1)
+    }
+
+    #[test]
+    fun test_scalar_little_endian_bits() {
+        let xinv = Scalar { data: X_INV };
+
+        // Get the little-endian bit representation of X_INV
+        let bits = scalar_little_endian_bits(&xinv);
+        let len = std::bit_vector::length(&bits);
+        assert!(len == 256, 1);
+
+        assert_same_bits(len, bits, X_INV_LE_BITS);
+
+        // Get the big-endian bit representation of X_INV
+        let bits = scalar_big_endian_bits(&xinv);
+        let len = std::bit_vector::length(&bits);
+        assert!(len == 256, 1);
+
+        assert_same_bits(len, bits, X_INV_BE_BITS);
+    }
+
+    fun assert_same_bits(len: u64, bits: BitVector, rhs_bits: vector<bool>) {
+        let i = 0u64;
+        while (i < len) {
+            assert!(std::bit_vector::is_index_set(&bits, i) == *std::vector::borrow(&rhs_bits, i), 1);
+            i = i + 1;
+        }
     }
 }

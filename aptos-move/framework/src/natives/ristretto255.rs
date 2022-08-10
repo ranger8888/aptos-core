@@ -1,6 +1,7 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
+use crate::natives::util::make_native_from_func;
 use move_deps::{
     move_binary_format::errors::PartialVMResult,
     move_vm_runtime::native_functions::{NativeContext, NativeFunction},
@@ -10,9 +11,8 @@ use move_deps::{
 };
 use sha2::Sha512;
 use smallvec::smallvec;
-use std::{collections::VecDeque, convert::TryFrom};
 use std::ops::{Add, Mul, Neg, Sub};
-use crate::natives::util::make_native_from_func;
+use std::{collections::VecDeque, convert::TryFrom};
 
 #[derive(Debug, Clone)]
 pub struct ScalarIsCanonicalGasParameters {
@@ -47,7 +47,7 @@ fn native_scalar_is_canonical(
     // This will build a Scalar in-memory and call curve25519-dalek's is_canonical
     match curve25519_dalek::scalar::Scalar::from_canonical_bytes(bytes_slice) {
         Some(_) => Ok(NativeResult::ok(cost, smallvec![Value::bool(true)])),
-        None => Ok(NativeResult::ok(cost, smallvec![Value::bool(false)]))
+        None => Ok(NativeResult::ok(cost, smallvec![Value::bool(false)])),
     }
 }
 
@@ -88,7 +88,10 @@ fn native_scalar_invert(
 
     // Invert and return
     cost += gas_params.per_scalar_invert_cost;
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.invert().to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.invert().to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -114,7 +117,10 @@ fn native_scalar_from_sha512(
     cost += gas_params.per_hash_sha512_cost + gas_params.per_byte_sha512_cost * bytes.len() as u64;
     let s = curve25519_dalek::scalar::Scalar::hash_from_bytes::<Sha512>(bytes.as_slice());
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -168,7 +174,10 @@ fn native_scalar_mul(
     cost += gas_params.per_mul_cost;
     let s = a.mul(b);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 #[derive(Debug, Clone)]
 pub struct ScalarAddGasParameters {
@@ -221,9 +230,11 @@ fn native_scalar_add(
     cost += gas_params.per_add_cost;
     let s = a.add(b);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
-
 
 #[derive(Debug, Clone)]
 pub struct ScalarSubGasParameters {
@@ -276,7 +287,10 @@ fn native_scalar_sub(
     cost += gas_params.per_sub_cost;
     let s = a.sub(b);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -317,7 +331,10 @@ fn native_scalar_neg(
     cost += gas_params.per_neg_cost;
     let s = a.neg();
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -342,7 +359,10 @@ fn native_scalar_from_u64(
     cost += gas_params.from_u64_cost;
     let s = curve25519_dalek::scalar::Scalar::from(num);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -367,7 +387,10 @@ fn native_scalar_from_u128(
     cost += gas_params.from_u128_cost;
     let s = curve25519_dalek::scalar::Scalar::from(num);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -403,9 +426,11 @@ fn native_scalar_from_256_bits(
     cost += gas_params.from_256_bits_cost;
     let s = curve25519_dalek::scalar::Scalar::from_bytes_mod_order(bytes_slice);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
-
 
 #[derive(Debug, Clone)]
 pub struct ScalarFrom512BitsGasParameters {
@@ -440,7 +465,10 @@ fn native_scalar_from_512_bits(
     cost += gas_params.from_512_bits_cost;
     let s = curve25519_dalek::scalar::Scalar::from_bytes_mod_order_wide(&bytes_slice);
 
-    Ok(NativeResult::ok(cost,smallvec![Value::vector_u8(s.to_bytes().to_vec())]))
+    Ok(NativeResult::ok(
+        cost,
+        smallvec![Value::vector_u8(s.to_bytes().to_vec())],
+    ))
 }
 
 #[derive(Debug, Clone)]
@@ -462,80 +490,47 @@ pub fn make_all(gas_params: GasParameters) -> impl Iterator<Item = (String, Nati
     let natives = [
         (
             "is_canonical_internal",
-            make_native_from_func(
-                gas_params.is_canonical,
-                native_scalar_is_canonical,
-            ),
+            make_native_from_func(gas_params.is_canonical, native_scalar_is_canonical),
         ),
         (
             "scalar_invert_internal",
-            make_native_from_func(
-                gas_params.scalar_invert,
-                native_scalar_invert,
-            ),
+            make_native_from_func(gas_params.scalar_invert, native_scalar_invert),
         ),
         (
             "scalar_from_sha512_internal",
-            make_native_from_func(
-                gas_params.scalar_from_sha512,
-                native_scalar_from_sha512,
-            ),
+            make_native_from_func(gas_params.scalar_from_sha512, native_scalar_from_sha512),
         ),
         (
             "scalar_mul_internal",
-            make_native_from_func(
-                gas_params.scalar_mul,
-                native_scalar_mul,
-            ),
+            make_native_from_func(gas_params.scalar_mul, native_scalar_mul),
         ),
         (
             "scalar_add_internal",
-            make_native_from_func(
-                gas_params.scalar_add,
-                native_scalar_add,
-            ),
+            make_native_from_func(gas_params.scalar_add, native_scalar_add),
         ),
         (
             "scalar_sub_internal",
-            make_native_from_func(
-                gas_params.scalar_sub,
-                native_scalar_sub,
-            ),
+            make_native_from_func(gas_params.scalar_sub, native_scalar_sub),
         ),
         (
             "scalar_neg_internal",
-            make_native_from_func(
-                gas_params.scalar_neg,
-                native_scalar_neg,
-            ),
+            make_native_from_func(gas_params.scalar_neg, native_scalar_neg),
         ),
         (
             "scalar_from_u64_internal",
-            make_native_from_func(
-                gas_params.scalar_from_u64,
-                native_scalar_from_u64,
-            ),
+            make_native_from_func(gas_params.scalar_from_u64, native_scalar_from_u64),
         ),
         (
             "scalar_from_u128_internal",
-            make_native_from_func(
-                gas_params.scalar_from_u128,
-                native_scalar_from_u128,
-            ),
+            make_native_from_func(gas_params.scalar_from_u128, native_scalar_from_u128),
         ),
         (
             "scalar_from_256_bits_internal",
-            make_native_from_func(
-                gas_params.scalar_from_256_bits,
-                native_scalar_from_256_bits,
-            ),
+            make_native_from_func(gas_params.scalar_from_256_bits, native_scalar_from_256_bits),
         ),
         (
             "scalar_from_512_bits_internal",
-            make_native_from_func(
-                gas_params.scalar_from_512_bits,
-                native_scalar_from_512_bits,
-            ),
+            make_native_from_func(gas_params.scalar_from_512_bits, native_scalar_from_512_bits),
         ),
     ];
 

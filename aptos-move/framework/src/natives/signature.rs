@@ -1,6 +1,7 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
+use crate::natives::util::make_native_from_func;
 use aptos_crypto::{bls12381, ed25519, traits::*};
 use curve25519_dalek::edwards::CompressedEdwardsY;
 use move_deps::move_vm_types::values::Struct;
@@ -13,7 +14,6 @@ use move_deps::{
 };
 use smallvec::smallvec;
 use std::{collections::VecDeque, convert::TryFrom};
-use crate::natives::util::make_native_from_func;
 
 /// Returns the equivalent of a Move std::option::none() natively in Rust.
 /// TODO: vector_for_testing_only is not an API we conceptually support and misusing it could cause the VM to crash.
