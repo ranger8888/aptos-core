@@ -311,13 +311,13 @@ module cryptography::ristretto255 {
     // X_INV from above, but in big-endian binary:
     // 0001110011011100000101111111110011100000111010011010010110111011110110010010010001111110010101101011101100000001011000110100011110111011101110100011000111101101110101011010100110111011100101101101010100001011110011010111101000111111100101100010101000001111
     const X_INV_BE_BITS: vector<bool> = vector[
-        false, false, false, true,  true,  true,  false, false, true,  true,  false, true,  true,  true,  false, false, 
-        false, false, false, true,  false, true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, 
-        true,  true,  true,  false, false, false, false, false, true,  true,  true,  false, true,  false, false, true, 
-        true,  false, true,  false, false, true,  false, true,  true,  false, true,  true,  true,  false, true,  true, 
+        false, false, false, true,  true,  true,  false, false, true,  true,  false, true,  true,  true,  false, false,
+        false, false, false, true,  false, true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false,
+        true,  true,  true,  false, false, false, false, false, true,  true,  true,  false, true,  false, false, true,
+        true,  false, true,  false, false, true,  false, true,  true,  false, true,  true,  true,  false, true,  true,
         true,  true,  false, true,  true,  false, false, true,  false, false, true,  false, false, true,  false, false,
         false, true,  true,  true,  true,  true,  true,  false, false, true,  false, true,  false, true,  true,  false,
-        true,  false, true,  true,  true,  false, true,  true,  false, false, false, false, false, false, false, true, 
+        true,  false, true,  true,  true,  false, true,  true,  false, false, false, false, false, false, false, true,
         false, true,  true,  false, false, false, true,  true,  false, true,  false, false, false, true,  true,  true,
         true,  false, true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  false, true,  false,
         false, false, true,  true,  false, false, false, true,  true,  true,  true,  false, true,  true,  false, true,

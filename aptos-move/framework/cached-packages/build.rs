@@ -16,7 +16,7 @@ fn main() {
         with_diagram: false,
         no_script_builder: false,
         no_script_abis: false,
-        no_errmap: false,
+        no_errmap: true,
         package: PathBuf::from("aptos-framework"),
         output: PathBuf::from(format!(
             "{}/{}",
@@ -45,7 +45,7 @@ fn main() {
         with_diagram: false,
         no_script_builder: false,
         no_script_abis: false,
-        no_errmap: false,
+        no_errmap: true,
         package: PathBuf::from("aptos-token"),
         output: PathBuf::from(format!(
             "{}/{}",
