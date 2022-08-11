@@ -268,7 +268,7 @@ module cryptography::ristretto255 {
     ];
 
     // The order minus 1: i.e., the "largest", reduced scalar in the field
-    const ELL_MINUS_ONE: vector<u8> = vector[
+    const L_MINUS_ONE: vector<u8> = vector[
         0xec, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
         0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -276,7 +276,7 @@ module cryptography::ristretto255 {
     ];
 
     // Non-canonical scalar: the order \ell of the group + 1
-    const ELL_PLUS_ONE: vector<u8> = vector[
+    const L_PLUS_ONE: vector<u8> = vector[
         0xee, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
         0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -284,7 +284,7 @@ module cryptography::ristretto255 {
     ];
 
     // Non-canonical scalar: the order \ell of the group + 2
-    const ELL_PLUS_TWO: vector<u8> = vector[
+    const L_PLUS_TWO: vector<u8> = vector[
         0xef, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
         0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -453,16 +453,16 @@ module cryptography::ristretto255 {
         assert!(std::option::is_none(&new_scalar_from_canonical_bytes(x"1010101010101010101010101010101010101010101010101010101010101010")), 1);
 
         // Canonical because \ell - 1
-        assert!(std::option::is_some(&new_scalar_from_canonical_bytes(ELL_MINUS_ONE)), 1);
+        assert!(std::option::is_some(&new_scalar_from_canonical_bytes(L_MINUS_ONE)), 1);
 
         // Non-canonical because \ell
         assert!(std::option::is_none(&new_scalar_from_canonical_bytes(ORDER_ELL)), 1);
 
         // Non-canonical because \ell+1
-        assert!(std::option::is_none(&new_scalar_from_canonical_bytes(ELL_PLUS_ONE)), 1);
+        assert!(std::option::is_none(&new_scalar_from_canonical_bytes(L_PLUS_ONE)), 1);
 
         // Non-canonical because \ell+2
-        assert!(std::option::is_none(&new_scalar_from_canonical_bytes(ELL_PLUS_TWO)), 1);
+        assert!(std::option::is_none(&new_scalar_from_canonical_bytes(L_PLUS_TWO)), 1);
     }
 
     #[test]
@@ -580,7 +580,7 @@ module cryptography::ristretto255 {
     #[test]
     fun test_scalar_add() {
         // Addition reduces: \ell-1 + 1 = \ell = 0
-        let ell_minus_one = Scalar { data: ELL_MINUS_ONE };
+        let ell_minus_one = Scalar { data: L_MINUS_ONE };
         assert!(scalar_is_zero(&scalar_add(&ell_minus_one, &scalar_one())), 1);
 
         // 1 + 1 = 2
@@ -591,7 +591,7 @@ module cryptography::ristretto255 {
     #[test]
     fun test_scalar_sub() {
         // Subtraction reduces: 0 - 1 = \ell - 1
-        let ell_minus_one = Scalar { data: ELL_MINUS_ONE };
+        let ell_minus_one = Scalar { data: L_MINUS_ONE };
         assert!(scalar_equals(&scalar_sub(&scalar_zero(), &scalar_one()), &ell_minus_one), 1);
 
         // 2 - 1 = 1
@@ -599,14 +599,14 @@ module cryptography::ristretto255 {
         assert!(scalar_is_one(&scalar_sub(&two, &scalar_one())), 1);
 
         // 1 - 2 = -1 = \ell - 1
-        let ell_minus_one = Scalar { data: ELL_MINUS_ONE };
+        let ell_minus_one = Scalar { data: L_MINUS_ONE };
         assert!(scalar_equals(&scalar_sub(&scalar_one(), &two), &ell_minus_one), 1);
     }
 
     #[test]
     fun test_scalar_from_256_bits() {
         // \ell + 2 = 0 + 2 = 2 (modulo \ell)
-        let s = std::option::extract(&mut new_scalar_from_reduced_256_bits(ELL_PLUS_TWO));
+        let s = std::option::extract(&mut new_scalar_from_reduced_256_bits(L_PLUS_TWO));
         let two = Scalar { data: TWO };
         assert!(scalar_equals(&s, &two), 1);
 

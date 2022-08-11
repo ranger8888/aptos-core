@@ -7,6 +7,46 @@ crate::natives::define_gas_parameters_for_natives!(GasParameters, "aptos_framewo
     [.account.create_address.base_cost, "account.create_address.base", 1],
     [.account.create_signer.base_cost, "account.create_signer.base", 1],
 
+    [.bit_vector.little_endian_bitvector_from_byte_vector.base_cost, "bit_vector.little_endian_bitvector_from_byte_vector.base", 1],
+    [.bit_vector.little_endian_bitvector_from_byte_vector.per_byte_cost, "bit_vector.little_endian_bitvector_from_byte_vector.per_byte_cost", 1],
+
+    [.bit_vector.big_endian_bitvector_from_byte_vector.base_cost, "bit_vector.big_endian_bitvector_from_byte_vector.base", 1],
+    [.bit_vector.big_endian_bitvector_from_byte_vector.per_byte_cost, "bit_vector.big_endian_bitvector_from_byte_vector.per_byte", 1],
+
+    [.ristretto255.is_canonical.base_cost, "cryptography.ristretto255.is_canonical.base", 1],
+    [.ristretto255.is_canonical.per_point_deserialize_cost, "cryptography.ristretto255.is_canonical.per_point_deserialize", 1],
+
+    [.ristretto255.scalar_invert.base_cost, "cryptography.ristretto255.scalar_invert.base", 1],
+    [.ristretto255.scalar_invert.per_scalar_invert_cost, "cryptography.ristretto255.scalar_invert.per_scalar_invert", 1],
+
+    [.ristretto255.scalar_from_sha512.base_cost, "cryptography.ristretto255.scalar_from_sha512.base", 1],
+    [.ristretto255.scalar_from_sha512.per_hash_sha512_cost, "cryptography.ristretto255.scalar_from_sha512.per_hash_sha512", 1],
+    [.ristretto255.scalar_from_sha512.per_byte_sha512_cost, "cryptography.ristretto255.scalar_from_sha512.per_byte_sha512", 1],
+
+    [.ristretto255.scalar_mul.base_cost, "cryptography.ristretto255.scalar_mul.base", 1],
+    [.ristretto255.scalar_mul.per_mul_cost, "cryptography.ristretto255.scalar_mul.per_mul", 1],
+
+    [.ristretto255.scalar_add.base_cost, "cryptography.ristretto255.scalar_add.base", 1],
+    [.ristretto255.scalar_add.per_add_cost, "cryptography.ristretto255.scalar_add.per_add", 1],
+
+    [.ristretto255.scalar_sub.base_cost, "cryptography.ristretto255.scalar_sub.base", 1],
+    [.ristretto255.scalar_sub.per_sub_cost, "cryptography.ristretto255.scalar_sub.per_sub", 1],
+
+    [.ristretto255.scalar_neg.base_cost, "cryptography.ristretto255.scalar_neg.base", 1],
+    [.ristretto255.scalar_neg.per_neg_cost, "cryptography.ristretto255.scalar_neg.per_neg", 1],
+
+    [.ristretto255.scalar_from_u64.base_cost, "cryptography.ristretto255.scalar_from_u64.base", 1],
+    [.ristretto255.scalar_from_u64.from_u64_cost, "cryptography.ristretto255.scalar_from_u64.from_u64", 1],
+
+    [.ristretto255.scalar_from_u128.base_cost, "cryptography.ristretto255.scalar_from_u128.base", 1],
+    [.ristretto255.scalar_from_u128.from_u128_cost, "cryptography.ristretto255.scalar_from_u128.from_u128", 1],
+
+    [.ristretto255.scalar_from_256_bits.base_cost, "cryptography.ristretto255.scalar_from_256_bits.base", 1],
+    [.ristretto255.scalar_from_256_bits.from_256_bits_cost, "cryptography.ristretto255.scalar_from_256_bits.from_256_bits", 1],
+
+    [.ristretto255.scalar_from_512_bits.base_cost, "cryptography.ristretto255.scalar_from_512_bits.base", 1],
+    [.ristretto255.scalar_from_512_bits.from_512_bits_cost, "cryptography.ristretto255.scalar_from_512_bits.from_512_bits", 1],
+
     [.signature.bls12381_aggregate_pop_verified_pubkeys.base_cost, "signature.bls12381_aggregate_pop_verified_pubkeys.base", 1],
     [.signature.bls12381_aggregate_pop_verified_pubkeys.per_pubkey_deserialize_cost, "signature.bls12381_aggregate_pop_verified_pubkeys.per_pubkey_deserialize", 1],
     [.signature.bls12381_aggregate_pop_verified_pubkeys.per_pubkey_aggregate_cost, "signature.bls12381_aggregate_pop_verified_pubkeys.per_pubkey_aggregate", 1],
