@@ -143,6 +143,7 @@ pub fn fetch_genesis_info(git_options: GitOptions) -> CliTypedResult<GenesisInfo
         layout.required_proposer_stake,
         layout.rewards_apy_percentage,
         layout.voting_duration_secs,
+        layout.voting_power_increase_limit,
     )?)
 }
 
